@@ -1,6 +1,13 @@
 const initialTime = 25;
-let time = initialTime;
-let level = 0;
+
+const gameData = {
+    level: 0,
+    time: initialTime,
+    sideLength: '',
+    usualColor: '',
+    unusualColor: '',
+    unusualBlockIndex: ''
+}
 
 const clear = (element) => {
     element.textContent = '';
@@ -11,56 +18,87 @@ const randomize = (first, last) => {
 }
 
 const getColorComponent = (component) => {
-    return component / 100 * 2 * (level + 10);
+    return component / 100 * 2 * (gameData.level + 10);
 }
 
-const getRightColor = (r, g, b) => {
+const getUnusualColor = (r, g, b) => {
     const newR = getColorComponent(r);
     const newG = getColorComponent(g);
     const newB = getColorComponent(b);
     return `rgb(${newR}, ${newG}, ${newB})`
 }
 
+/*const serializeProgress = (level, time, usualColor, unusualColor, unusualBlockIndex) => {
+    const progress = {
+        level: level,
+        time: time,
+        usualColor: usualColor,
+        unusualColor: unusualColor,
+        unusualBlockIndex: unusualBlockIndex
+    };
+    localStorage.setItem('progress', JSON.stringify(progress));
+}
+
+const deserializeProgress = () => {
+    const progress = JSON.parse(localStorage.getItem('progress'));
+
+    // !!!
+}*/
+
 const renderLevel = () => {
-    level++;
     const gameField = document.getElementsByClassName('game-field')[0];
     const levelNum = document.getElementsByClassName('level-num')[0];
-    const sideLength = level >= 10 ? 10 : level + 1;
-    const blocksCount = sideLength * sideLength;
-    const rigthBlockIndex = randomize(0, blocksCount);
-    const r = randomize(0,255);
-    const g = randomize(0,255);
-    const b = randomize(0,255);
+    const blocksCount = gameData.sideLength * gameData.sideLength;
 
     //serializeProgress();
 
     clear(gameField);
-    levelNum.textContent = level;
+    levelNum.textContent = gameData.level;
 
-    gameField.style.gridTemplateColumns = `repeat(${sideLength}, auto)`;
-    gameField.style.gridTemplateRows = `repeat(${sideLength}, auto)`;
+    gameField.style.gridTemplateColumns = `repeat(${gameData.sideLength}, auto)`;
+    gameField.style.gridTemplateRows = `repeat(${gameData.sideLength}, auto)`;
 
     for (let i = 0; i < blocksCount; i++) {
         const block = document.createElement('div');
         block.className = 'field-block';
-        if (i === rigthBlockIndex) {
-            block.addEventListener('click', renderLevel);
-            block.style.backgroundColor = getRightColor(r, g, b);
+        if (i === gameData.unusualBlockIndex) {
+            block.addEventListener('click', createGameData);
+            block.style.backgroundColor = gameData.unusualColor;
         } else
-            block.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+            block.style.backgroundColor = gameData.usualColor;
         gameField.appendChild(block);
     }
 
 }
 
+const createGameData = () => {
+    const level = gameData.level + 1;
+    const sideLength = level >= 10 ? 10 : level + 1;
+    const blocksCount = sideLength * sideLength;
+    const unusualBlockIndex = randomize(0, blocksCount);
+    const r = randomize(0,255);
+    const g = randomize(0,255);
+    const b = randomize(0,255);
+    const usualColor = `rgb(${r}, ${g}, ${b})`;
+    const unusualColor = getUnusualColor(r, g, b);
+
+    gameData.level = level;
+    gameData.sideLength = sideLength;
+    gameData.unusualBlockIndex = unusualBlockIndex;
+    gameData.usualColor = usualColor;
+    gameData.unusualColor = unusualColor;
+
+    renderLevel();
+}
+
 const finishGame = () => {
-    level = 0;
-    time = initialTime;
+    gameData.level = 0;
+    gameData.time = initialTime;
 
     const levelNum = document.getElementsByClassName('level-num')[0];
     const timerNum = document.getElementsByClassName('timer-num')[0];
     clear(levelNum);
-    clear(timerNum);
+    timerNum.textContent = initialTime;
 
     const gameField = document.getElementsByClassName('game-field')[0];
     clear(gameField);
@@ -74,25 +112,32 @@ const finishGame = () => {
     gameField.appendChild(startButton);
 }
 
+/*const loadGame = () => {
+    deserializeProgress();
+    renderLevel();
+}*/
+
 const start = (startButton) => {
     startButton.remove();
 
     const delay = 1000;
     let timer = setTimeout(function tick(){
         const timerNum = document.getElementsByClassName('timer-num')[0];
-        time--;
-        timerNum.textContent = time;
+        gameData.time--;
+        timerNum.textContent = gameData.time;
 
-        if (time > 0)
+        if (gameData.time > 0)
             timer = setTimeout(tick, delay);
         else
             finishGame();
     }, delay);
 
-    renderLevel();
+    createGameData();
 }
 
 window.addEventListener('load', () => {
+    //if (localStorage.getItem('level') !== null)
+    //    loadGame();
     const startButton = document.getElementsByClassName('start-button')[0];
     startButton.addEventListener('click', start.bind(this, startButton));
     const timerNum = document.getElementsByClassName('timer-num')[0];
