@@ -23,7 +23,8 @@ const setTime = () => {
 }
 
 const getColorComponent = (component) => {
-    return component / 100 * 2 * (gameData.level + 10);
+    const additionalValue = gameData.level < 35 ? gameData.level : 35;
+    return component / 100 * 2 * (additionalValue + 10);
 }
 
 const getUnusualColor = (r, g, b) => {
@@ -102,6 +103,8 @@ const createGameData = () => {
 }
 
 const finishGame = () => {
+    alert(`Игра окончена! Уровней пройдено: ${gameData.level - 1}.`);
+
     localStorage.clear();
     gameData.level = 0;
     gameData.time = initialTime;
@@ -153,8 +156,16 @@ const start = (startButton) => {
 window.addEventListener('load', () => {
     if (localStorage.getItem('progress') !== null)
         loadGame();
-    const startButton = document.getElementsByClassName('start-button')[0];
-    startButton.addEventListener('click', start.bind(this, startButton));
-    const timerNum = document.getElementsByClassName('timer-num')[0];
-    timerNum.textContent = initialTime;
+    else {
+        const gameField = document.getElementsByClassName('game-field')[0];
+        const timerNum = document.getElementsByClassName('timer-num')[0];
+
+        const startButton = document.createElement('button');
+        startButton.className = 'start-button';
+        startButton.textContent = 'START';
+        startButton.addEventListener('click', start.bind(this, startButton));
+        gameField.appendChild(startButton);
+        
+        timerNum.textContent = initialTime;
+    }
 })
