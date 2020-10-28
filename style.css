@@ -8,6 +8,7 @@ div, body, p {
     box-sizing: border-box;
 }
 
+/* Вся страница */
 #root {
     width: 100vw;
     height: 100vh;
@@ -19,6 +20,7 @@ div, body, p {
     background-color: antiquewhite;
 }
 
+/* Область игры */
 .game {
     width: 97vh;
     height: 97vh;
@@ -34,6 +36,7 @@ div, body, p {
     border-radius: 15px;
 }
 
+/* Область информации о прогрессе игры */
 .game-info {
     display: flex;
     justify-content: space-between;
@@ -49,6 +52,7 @@ div, body, p {
     flex-direction: row;
 }
 
+/* Область рендера блоков */
 .game-field {
     height: 77%;
 
@@ -62,6 +66,7 @@ div, body, p {
     border-radius: 5px;
 }
 
+/* Кнопка начала игры */
 .start-button {
     height: 100%;
 
@@ -77,17 +82,20 @@ div, body, p {
     font-size: 5em;
 }
 
+/* Цветной блок */
 .field-block {
     border-radius: 5px;
     cursor: pointer;
 }
 
+/* Область доп. опций */
 .game-additional {
     background-color: white;
     border: 0;
     border-radius: 5px;
 }
 
+/* Кнопка вызова бота */
 .bot-button {
     width: 100%;
     height: 100%;
@@ -102,6 +110,7 @@ div, body, p {
     font-size: 1.5em;
 }
 
+/* Кнопка вызова бота во время игры */
 button.playing {
     background-color: darkgrey;
     cursor: initial;
