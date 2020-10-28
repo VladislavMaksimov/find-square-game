@@ -1,3 +1,15 @@
+let state = {
+    playing: false
+};
+
+const setPlaying = (playing) => {
+    state.playing = playing;
+}
+
+const stopBot = () => {
+    setPlaying(false)
+}
+
 const isBlockUnusual = (checkedBlock, controlBlock1, controlBlock2) => {
     const checkedBlockColor = checkedBlock.style.backgroundColor;
     const controlBlock1Color = controlBlock1.style.backgroundColor;
@@ -22,6 +34,8 @@ const findUnusualFromFirstThree = (block0, block1, block2) => {
 }
 
 const tryToPlay = () => {
+    if (!state.playing) return;
+
     const blocks = document.getElementsByClassName('field-block');
     if (blocks.length > 3) {
         if (!findUnusualFromFirstThree(blocks[0], blocks[1], blocks[2]))
@@ -30,21 +44,14 @@ const tryToPlay = () => {
                     blocks[i].click();
                     break;
                 }
-        setTimeout(tryToPlay, 1000);
-    } else {
-        const startButton = document.getElementsByClassName('start-button')[0];
-        if (typeof startButton !== 'undefined') {
-            const botButton = document.getElementsByClassName('bot-button')[0];
-            botButton.classList.remove('playing');
-            botButton.addEventListener('click', tryToStart);
-            return;
-        }
-        else
-            setTimeout(tryToPlay, 1000);
     }
+
+    setTimeout(tryToPlay, 1000);
 }
 
 const tryToStart = () => {
+    setPlaying(true);
+
     const startButton = document.getElementsByClassName('start-button')[0];
     const blocks = document.getElementsByClassName('field-block');
 
@@ -59,14 +66,4 @@ const tryToStart = () => {
     }
 }
 
-const startBot = () => {
-    const botButton = document.getElementsByClassName('bot-button')[0];
-    botButton.classList.add('playing');
-    botButton.removeEventListener('click', startBot);
-    tryToStart();
-}
-
-window.addEventListener('load', () => {
-    const botButton = document.getElementsByClassName('bot-button')[0];
-    botButton.addEventListener('click', startBot);
-});
+const startBot = () => tryToStart();

@@ -103,6 +103,11 @@ const createGameData = () => {
 }
 
 const finishGame = () => {
+    stopBot();
+    const botButton = document.getElementsByClassName('bot-button')[0];
+    botButton.classList.remove('playing');
+    botButton.addEventListener('click', useBot);
+
     alert(`Игра окончена! Уровней пройдено: ${gameData.level - 1}.`);
 
     localStorage.clear();
@@ -140,6 +145,13 @@ const startTimer = () => {
     }, delay);
 }
 
+const useBot = () => {
+    const botButton = document.getElementsByClassName('bot-button')[0];
+    botButton.classList.add('playing');
+    botButton.removeEventListener('click', useBot);
+    startBot();
+}
+
 const loadGame = () => {
     deserializeProgress();
     setTime();
@@ -154,6 +166,9 @@ const start = (startButton) => {
 }
 
 window.addEventListener('load', () => {
+    const botButton = document.getElementsByClassName('bot-button')[0];
+    botButton.addEventListener('click', useBot);
+
     if (localStorage.getItem('progress') !== null)
         loadGame();
     else {
