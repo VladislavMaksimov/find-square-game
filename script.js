@@ -1,5 +1,6 @@
 // Общее время игры
 const initialTime = 25;
+let timer;
 
 // Текущее состояние игры
 const gameData = {
@@ -28,8 +29,8 @@ const setTime = () => {
 
 // Получает r, g или b компонент "необычного" цвета по компоненту обычного
 const getColorComponent = (component) => {
-    const additionalValue = gameData.level < 35 ? gameData.level : 35;
-    return component / 100 * 2 * (additionalValue + 10);
+    const additionalValue = gameData.level < 20 ? gameData.level : 20;
+    return component / 100 * 3 * (additionalValue + 10);
 }
 
 // Получает "необычный" цвет по обычному
@@ -86,8 +87,10 @@ const renderLevel = () => {
         if (i === gameData.unusualBlockIndex) {
             block.addEventListener('click', createGameData);
             block.style.backgroundColor = gameData.unusualColor;
-        } else
+        } else {
             block.style.backgroundColor = gameData.usualColor;
+            block.addEventListener('click', finishGame);
+        }
         gameField.appendChild(block);
     }
 
@@ -117,6 +120,7 @@ const createGameData = () => {
 
 // Завершает игру
 const finishGame = () => {
+    clearInterval(timer);
     // Останавливает бота и делает кнопку бота кликабельной
     stopBot();
     const botButton = document.getElementsByClassName('bot-button')[0];
@@ -152,7 +156,7 @@ const finishGame = () => {
 // Запускает таймер
 const startTimer = () => {
     const delay = 1000;
-    let timer = setTimeout(function tick(){
+    timer = setTimeout(function tick(){
         gameData.time--;
         setTime();
         localStorage.setItem('time', gameData.time);
